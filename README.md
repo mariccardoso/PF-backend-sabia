@@ -1,17 +1,17 @@
 <div align="center">
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/SENAI_S%C3%A3o_Paulo_logo.png/1200px-SENAI_S%C3%A3o_Paulo_logo.png" height="30px">
-<h1>🎮 GameStream API 🎮 </h1>
+<img src="./assets/img/SabiaLogo.png" height="100px">
+<h1>Projeto Final Indivídual </h1>
 </div>
 
 
 ## 🎲 Introdução
-**Desafio Proposto:** A empresa "GameStream" está desenvolvendo uma plataforma de streaming de jogos que permite aos usuários transmitir suas partidas ao vivo, compartilhar vídeos de momentos de destaque e interagir com outros jogadores. Você foi contratado como desenvolvedor back-end para criar uma API que gerenciará o cadastro de jogos, canais e transmissões.
+**Qual o projeto?:** Uma plataforma digital inclusiva voltada para auxiliar crianças e jovens com deficiências cognitivas (TEA, TDAH, dislexia e outros) no ambiente escolar. O sistema será FullStack: backend em Node.js/Express e frontend web em Next.js para professores/responsáveis,
 
 
 ## ⚒ Tecnologias Utilizadas
 
 
-<img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js Badge" /> | <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma Badge" /> | <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="Express.js Badge" />  | <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite Badge" /> | <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript Badge" />
+<img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js Badge" /> | <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma Badge" /> | <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="Express.js Badge" />  | <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite Badge" /> | <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript Badge" /> 
 
 ## ⚙ Métodos
 Requisições para a API devem seguir os padrões:
@@ -42,23 +42,30 @@ O projeto implementa autenticação JWT com endpoints para:
 
 ## 🔁 API Endpoints
 
-## 🎮 Jogos 
+## 🐤 Usuários
 | Método HTTP | Endpoint         | Descrição                         |
 |-------------|------------------|-----------------------------------|
-| `GET`       | /games           | Retorna todos os Jogos            |
-| `POST`      | /games           | Cria um novo jogo                 |
+| `GET`       | auth/users           | Retorna todos os usuários            |
+| `GET`      | auth/profile/:id/       | Retorna um usuário específico           |
+`DELETE`  | /auth/users/:id | Deleta um usuário específico 
 
-## 📡 Channels
-| Método HTTP | Endpoint         | Descrição                         |
-|-------------|------------------|-----------------------------------|
-| `GET`       | /channels        | Retorna todos os canais           |
-| `POST`      | /channels        | Cria um novo canal                |
 
-## 🎥 Streams
+## 📚 Atividades
 | Método HTTP | Endpoint         | Descrição                         |
 |-------------|------------------|-----------------------------------|
-| `GET`       | /streams         | Retorna todas as transmissões     |
-| `POST`      | /streams         | Cria uma nova transmissão         |
+| `GET`       | /activities      | Retorna todas as atividades       |
+| `GET`       | /activities/:id  | Retorna uma atividade específica   |
+| `POST`      | /activities      | Cria uma nova atividade           | 
+| `PUT`       | /activities/:id  | Atualiza uma atividade específica |
+| `DELETE`    | /activities/:id  | Deleta uma atividade específica   |
+
+## 📊 Progressos
+| Método HTTP | Endpoint         | Descrição                         |
+|-------------|------------------|-----------------------------------|
+| `GET`       | /progress        | Retorna todos os progressos       |
+| `POST`      | /progress        | Cria um novo progresso            |
+| `PUT`       | /progress/:id    | Atualiza um progresso específico  |
+| `DELETE`    | /progress/:id    | Deleta um progresso específico    |
 
 
 ## 🎯 Listar
@@ -70,7 +77,20 @@ As ações de `listar` permitem o envio dos seguintes parâmetros:
 | `page` | Informa qual página deve ser retornada. |
 
 ## 🚀 Como Executar
-1. Instale as dependências do projeto:
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/mariccardoso/PF-backend-sabia.git
+```
+
+2. Acesse o diretório do projeto:
+
+```bash
+cd PF-backend-sabia
+```
+
+3. Instale as dependências do projeto:
 
 ```bash
 npm install
@@ -99,12 +119,13 @@ npm run dev
 ## 📂 Estrutura de Diretórios
 ```
 pgsql
+📁 database         → Arquivos de configuração do Prisma
+|
 📁 src
-├── 📁 controllers      → Lógica de negócio
-├── 📁 models           → Definição das entidades
-├── 📁 routes           → Definição das rotas da API
-├── 📁 database         → Arquivos de configuração do Prisma
-├── 📁 middlewares      → Autenticação e tratamento de erros
+    ├── 📁 controllers      → Lógica de negócio
+    ├── 📁 models           → Definição das entidades
+    ├── 📁 routes           → Definição das rotas da API
+    ├── 📁 middlewares      → Autenticação e tratamento de erros
 └── 📄 server.js        → Ponto de entrada da aplicação
 ```
 
@@ -142,6 +163,6 @@ Contribuições são super bem-vindas! Siga os passos:
 4. Push: git push origin feature/NovaFuncionalidade
 5. Crie um Pull Request 🚀
 
-# Feito com ❤ por Mariana Dev
+### Feito com ❤ por Mariana Dev
 
 
