@@ -6,7 +6,7 @@ import authMiddleware from "../middleware/auth.middleware.js";
 import activityRouter from "./activities.routes.js";
 import gameRouter from "./game.routes.js";
 import channelRouter from "./channels.routes.js";
-import streamRouter from "./stream.routes.js";
+import progressRouter from "./progress.routes.js";
 
 const router = express.Router();
 
@@ -14,11 +14,11 @@ const router = express.Router();
 router.use("/auth", authRouter);
 router.use("/games", gameRouter)
 router.use ("/channels", channelRouter)
-router.use("/streams", streamRouter)
 
 // Rotas protegidas
 router.use(authMiddleware);
-router.use("/activities", activityRouter)
+router.use("/activities", activityRouter);
+router.use("/progress", progressRouter);
 
 
 
