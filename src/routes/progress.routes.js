@@ -4,6 +4,7 @@ import ProgressController from "../controllers/progress.controller.js";
 const progressRouter = express.Router();
 
 progressRouter.get("/", ProgressController.getAllProgress);
+progressRouter.get("/:id", ProgressController.getProgressById);
 progressRouter.post("/", ProgressController.createProgress);
 progressRouter.put("/:id", ProgressController.updateProgress);
 progressRouter.delete("/:id", ProgressController.deleteProgress);

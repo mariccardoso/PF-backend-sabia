@@ -45,7 +45,18 @@ class ActivityModel {
         return { totalViews, grandTotal, activities };
     }
 
-    // Criar um novo canal
+    // Procurar atividade por ID
+    async findById(id) {
+        const activity = await prisma.activity.findUnique({
+            where: { id: Number(id) },
+            include: {
+                progress: true
+            },
+        });
+        return activity;
+    }
+
+    // Criar uma nova atividade
     async create(data) {
         const activity = await prisma.activity.create({
             data,
@@ -54,7 +65,7 @@ class ActivityModel {
         return activity;
     }
 
-    // Atualizar um canal
+    // Atualizar uma atividade
     async update(id, data) {
         const activity = await prisma.activity.update({
             where: { id: Number(id) },
@@ -64,7 +75,7 @@ class ActivityModel {
         return activity;
     }
 
-    // Excluir um canal
+    // Excluir uma atividade
     async delete(id) {
         await prisma.activity.delete({
             where: {

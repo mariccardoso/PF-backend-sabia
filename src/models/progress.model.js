@@ -54,12 +54,36 @@ class ProgressModel {
         return { totalViews, grandTotal, progress };
     }
 
+
+    // Verificar se activityId existe
+    async checkActivityExists(activityId) {
+        const activity = await prisma.activity.findUnique({
+            where: { id: Number(activityId) },
+        });
+        return activity;
+    }
+
+    // Verificar se userId existe
+    async checkUserExists(userId) {
+        const user = await prisma.user.findUnique({
+            where: { id: Number(userId) },
+        });
+        return user;
+    }
+
+    // Procurar progresso por ID
+    async findById(id) {
+        const progress = await prisma.progress.findUnique({
+            where: { id: Number(id) },
+        });
+        return progress;
+    }
+    
     // Criar um novo progresso
     async create(data) {
         const progress = await prisma.progress.create({
             data,
         });
-
         return progress;
     }
 

@@ -22,7 +22,22 @@ class ActivityController {
         }
     }
 
-    // Criar novo atividade
+    // Procurar atividade por ID
+    async getActivityById(req, res) {
+        const activityId = req.params.id;
+        try {
+            const activity = await ActivityModel.findById(activityId);
+            if (!activity) {
+                return res.status(404).json({ error: "Atividade não encontrada" });
+            }
+            res.json(activity);
+        } catch (error) {
+            console.error("Erro ao buscar atividade por ID:", error);
+            res.status(500).json({ error: "Erro ao buscar atividade por ID" });
+        }
+    }
+
+    // Criar nova atividade
     async createActivity(req, res) {
         try {
             const {
