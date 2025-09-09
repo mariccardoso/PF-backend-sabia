@@ -13,78 +13,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  Aluno
+  Pai 
+  Professor
+}
+
+enum ActivityType {
+  Quiz
+  MemoryGame
+  Drag_and_Drop
+}
+
+enum DifficultyLevel {
+  Easy
+  Medium
+  Hard
+}
+
+enum ProgressStatus {
+  Not_Started
+  In_Progress
+  Completed
+}
+
 model User {
   id          Int     @id @default(autoincrement())
   username    String
   email       String  @unique
   password    String
-  displayName String
-  avatarUrl   String?
+  role        Role    @default(Aluno)
   bio         String?
-  channels Channel[]
-  streams  Stream[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  progress Progress[]
 
   @@map("users")
 }
 
-model Channel {
-  id          Int     @id @default(autoincrement())
-  name        String
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  title       String
   description String
-  isLive      Boolean
-  bannerUrl   String?
-  logoUrl     String?
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  streams Stream[]
+  type        ActivityType @default(Quiz)
+  difficulty  DifficultyLevel @default(Easy)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("channels")
+  progress Progress[]
+
+  @@map("activities")
 }
 
-model Game {
-  id            Int      @id @default(autoincrement())
-  title         String
-  description   String
-  platform      String
-  releaseDate   DateTime
-  coverImageUrl String?
-  genre         String?
+model Progress {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  activityId  Int
+  status      ProgressStatus @default(Not_Started)
+  score       Int?
+  completedAt DateTime?
 
-  streams Stream[]
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("games")
+  @@map("progress")
 }
-
-model Stream {
-  id           Int      @id @default(autoincrement())
-  title        String
-  thumbnailUrl String?
-  isLive       Boolean?
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  channelId Int
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  gameId Int
-  game   Game @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("streams")
-}
-
-
