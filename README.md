@@ -1,6 +1,5 @@
 <div align="center">
-<img src="./assets/img/SabiaLogo.png" height="100px">
-<h1>Projeto Final Indivídual </h1>
+<img src="./assets/img/SabiaLogo.png" height="150px">
 </div>
 
 
