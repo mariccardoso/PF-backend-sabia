@@ -39,7 +39,8 @@ enum ProgressStatus {
 
 model User {
   id          Int     @id @default(autoincrement())
-  username    String
+  username    String? 
+  name        String  
   email       String  @unique
   password    String
   role        Role    @default(Aluno)

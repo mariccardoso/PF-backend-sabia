@@ -19,17 +19,17 @@ class AuthController {
     try {
       const {
         username,
-        displayName, 
-        email, 
-        password, 
-        avatarUrl, 
+        name,
+        email,
+        password,
+        role,
         bio
       } = req.body;
       // Validação básica
-      if (!username || !email || !password || !displayName) {
+      if (!email || !password || !name || !role) {
         return res
           .status(400)
-          .json({ error: "Os campos nome de usuário, nome, email e senha são obrigatórios!" });
+          .json({ error: "Os campos nome de usuário, nome, email, senha e papel são obrigatórios!" });
       }
 
       // Verificar se o usuário já existe
@@ -44,10 +44,10 @@ class AuthController {
       // Criar objeto do usuário
       const data = {
         username,
-        displayName, 
-        email, 
+        name,
+        email,
         password: hashedPassword,
-        avatarUrl, 
+        role,
         bio
       };
 
@@ -112,6 +112,36 @@ class AuthController {
     } catch (error) {
       console.error("Erro ao fazer login: ", error);
       res.status(500).json({ error: "Erro ao fazer login!" });
+    }
+  }
+
+  async getProfile(req, res) {
+    try {
+      const userId = req.user.id;
+      const user = await UserModel.find
+      ById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado!" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Erro ao obter perfil do usuário:", error);
+      res.status(500).json({ error: "Erro ao obter perfil do usuário" });
+    }
+  }
+
+  async deleteUser(req, res) {
+    try {
+      const { id } = req.params;
+      const user = await UserModel.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado!" });
+      }
+      await UserModel.delete(id);
+      res.json({ message: "Usuário deletado com sucesso!" });
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error);
+      res.status(500).json({ error: "Erro ao deletar usuário" });
     }
   }
 }

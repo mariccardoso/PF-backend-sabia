@@ -15,8 +15,7 @@ class UserModel {
         id: Number(id),
       },
       include: {
-        channels: true,
-        streams: true
+        progress: true,
       }
     });
 
@@ -42,6 +41,17 @@ class UserModel {
 
     return user;
   }
+
+  // Deletar um usuário pelo ID
+    async delete(id) {
+        await prisma.user.delete({
+            where: {
+                id: Number(id),
+            },
+        });
+        return true;
+    }
+
 }
 
 export default new UserModel();
