@@ -117,12 +117,20 @@ class AuthController {
 
   async getProfile(req, res) {
     try {
+      // Valida se o middleware populou req.user
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({ error: "Usuário não autenticado" });
+      }
+  
       const userId = req.user.id;
-      const user = await UserModel.find
-      ById(userId);
+  
+      // Corrigido findById
+      const user = await UserModel.findById(userId);
+  
       if (!user) {
         return res.status(404).json({ error: "Usuário não encontrado!" });
       }
+  
       res.json(user);
     } catch (error) {
       console.error("Erro ao obter perfil do usuário:", error);
