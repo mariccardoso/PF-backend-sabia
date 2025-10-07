@@ -1,28 +1,42 @@
 import ProgressModel from "../models/progress.model.js";
 
 class ProgressController {
-    // Listar todos os progressos
-    async getAllProgress(req, res) {
-        const activityId = req.query.activityId;
-        const userId = req.query.userId;
-        const status = req.query.status;
-        const page = req.query.page || 1;
-        const limit = req.query.limit || 10;
+// Listar todos os progressos
+async getAllProgress(req, res) {
+    let { activityId, userId, status, page = 1, limit = 10 } = req.query;
 
-        try {
-            const progress = await ProgressModel.findAll(
-                activityId,
-                userId,
-                status,
-                page,
-                limit 
-            );
-            res.json(progress);
-        } catch (error) {
-            console.error("Erro ao listar progressos:", error);
-            res.status(500).json({ error: "Erro ao listar progressos" });
+    try {
+        // Converter para números válidos
+        if (activityId !== undefined) {
+            const id = Number(activityId);
+            if (isNaN(id)) return res.status(400).json({ error: "activityId inválido" });
+            activityId = id;
         }
+
+        if (userId !== undefined) {
+            const id = Number(userId);
+            if (isNaN(id)) return res.status(400).json({ error: "userId inválido" });
+            userId = id;
+        }
+
+        // Garantir que page e limit sejam números
+        page = Number(page);
+        limit = Number(limit);
+
+        const progress = await ProgressModel.findAll(
+            activityId,
+            userId,
+            status,
+            page,
+            limit
+        );
+
+        res.json(progress);
+    } catch (error) {
+        console.error("Erro ao listar progressos:", error);
+        res.status(500).json({ error: "Erro ao listar progressos" });
     }
+}
 
     // Procurar progresso por ID
     async getProgressById(req, res) {
@@ -95,17 +109,24 @@ class ProgressController {
 
     async updateProgress(req, res) {
         const progressId = req.params.id;
+    
+        if (!progressId) {
+            return res.status(400).json({ error: "ID do progresso é obrigatório" });
+        }
+    
         const { status, score, completedAt } = req.body;
+    
         try {
-            // Verificar se o progresso existe
             const existingProgress = await ProgressModel.update(progressId, {
                 status,
                 score,
-                completedAt
+                completedAt: completedAt || new Date(),
             });
+    
             if (!existingProgress) {
                 return res.status(404).json({ error: "Progresso não encontrado" });
             }
+    
             return res.json({ message: "Progresso atualizado com sucesso!", progress: existingProgress });
         } catch (error) {
             console.error("Erro ao atualizar o progresso: ", error);

@@ -1,486 +1,125 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Iniciando o seed...");
+  console.log('🌱 Iniciando seed do banco Sabiá...');
 
-  // Código opcional para limpar o banco de dados antes de inserir novos dados
-  await prisma.card.deleteMany({});
-  await prisma.collection.deleteMany({});
+  // Limpa dados anteriores
+  await prisma.progress.deleteMany();
+  await prisma.activity.deleteMany();
+  await prisma.user.deleteMany();
 
-  // Criar coleções de diferentes temáticas
-  const nbaLegends = await prisma.collection.create({
+  // Cria usuários base
+  const aluno = await prisma.user.create({
     data: {
-      name: "NBA Legends",
-      description: "Jogadores lendários da história do basquete da NBA",
-      releaseYear: 2023,
+      name: 'Joãozinho',
+      email: 'joaozinho@sabia.com',
+      password: '123456',
+      role: 'Aluno',
+      bio: 'Estudante com TEA nível 1. Gosta de jogos e atividades visuais.',
     },
   });
 
-  const rockBands = await prisma.collection.create({
+  const pai = await prisma.user.create({
     data: {
-      name: "Classic Rock",
-      description: "Bandas clássicas do rock mundial",
-      releaseYear: 2022,
+      name: 'Marcelo Cardoso',
+      email: 'marcelo@sabia.com',
+      password: '123456',
+      role: 'Pai',
+      bio: 'Pai do Joãozinho. Gosta de acompanhar o progresso do filho.',
     },
   });
 
-  const worldMonuments = await prisma.collection.create({
+  const professora = await prisma.user.create({
     data: {
-      name: "World Monuments",
-      description: "Monumentos históricos famosos ao redor do mundo",
-      releaseYear: 2021,
+      name: 'Prof. Ana',
+      email: 'ana@sabia.com',
+      password: '123456',
+      role: 'Professor',
+      bio: 'Professora de apoio pedagógico. Focada em inclusão e aprendizagem visual.',
     },
   });
 
-  const dinosaurs = await prisma.collection.create({
-    data: {
-      name: "Prehistoric Giants",
-      description: "Dinossauros que habitaram a Terra há milhões de anos",
-      releaseYear: 2023,
+  // Cria atividades
+  const activitiesData = [
+    // --- QUIZ ---
+    {
+      title: 'Cores e Emoções',
+      description:
+        'Identifique a cor correspondente à emoção mostrada. Exemplo: “Feliz” → Amarelo.',
+      type: 'Quiz',
+      difficulty: 'Easy',
     },
+    {
+      title: 'Animais Falantes',
+      description:
+        'Ouça o som e escolha o animal correto. Desenvolve atenção auditiva e associação.',
+      type: 'Quiz',
+      difficulty: 'Medium',
+    },
+
+    // --- MEMORY GAME ---
+    {
+      title: 'Memória das Frutas',
+      description:
+        'Combine pares de frutas iguais. Estimula concentração e reconhecimento visual.',
+      type: 'MemoryGame',
+      difficulty: 'Easy',
+    },
+    {
+      title: 'Memória das Palavras',
+      description:
+        'Combine imagens com as palavras correspondentes. Ideal para alunos com dislexia.',
+      type: 'MemoryGame',
+      difficulty: 'Hard',
+    },
+
+    // --- DRAG AND DROP ---
+    {
+      title: 'Organizando o Dia',
+      description:
+        'Arraste as atividades diárias para a ordem correta (acordar, escovar os dentes, ir à escola).',
+      type: 'Drag_and_Drop',
+      difficulty: 'Medium',
+    },
+    {
+      title: 'Montando a História',
+      description:
+        'Arraste as imagens para formar a sequência lógica da história contada em áudio.',
+      type: 'Drag_and_Drop',
+      difficulty: 'Hard',
+    },
+  ];
+
+  const activities = await prisma.activity.createMany({
+    data: activitiesData,
   });
 
-  const videogameConsoles = await prisma.collection.create({
-    data: {
-      name: "Gaming History",
-      description: "Consoles de videogame que marcaram gerações",
-      releaseYear: 2022,
-    },
-  });
+  console.log(`✅ ${activitiesData.length} atividades criadas com sucesso!`);
 
-  console.log("Coleções criadas. Inserindo cards...");
+  // Cria progresso inicial do aluno
+  const allActivities = await prisma.activity.findMany();
+  for (const act of allActivities) {
+    await prisma.progress.create({
+      data: {
+        userId: aluno.id,
+        activityId: act.id,
+        status: 'Not_Started',
+        score: 0,
+      },
+    });
+  }
 
-  // Cards para NBA Legends
-  const nbaCards = await Promise.all([
-    prisma.card.create({
-      data: {
-        name: "Michael Jordan",
-        rarity: "Ultra Rare",
-        attackPoints: 9800,
-        defensePoints: 9200,
-        imageUrl: "https://example.com/jordan.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "LeBron James",
-        rarity: "Ultra Rare",
-        attackPoints: 9700,
-        defensePoints: 9500,
-        imageUrl: "https://example.com/lebron.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Kobe Bryant",
-        rarity: "Ultra Rare",
-        attackPoints: 9600,
-        defensePoints: 9300,
-        imageUrl: "https://example.com/kobe.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Magic Johnson",
-        rarity: "Super Rare",
-        attackPoints: 9400,
-        defensePoints: 8700,
-        imageUrl: "https://example.com/magic.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Larry Bird",
-        rarity: "Super Rare",
-        attackPoints: 9300,
-        defensePoints: 8800,
-        imageUrl: "https://example.com/bird.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Shaquille O'Neal",
-        rarity: "Super Rare",
-        attackPoints: 9500,
-        defensePoints: 9400,
-        imageUrl: "https://example.com/shaq.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Stephen Curry",
-        rarity: "Rare",
-        attackPoints: 9200,
-        defensePoints: 8500,
-        imageUrl: "https://example.com/curry.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Kevin Durant",
-        rarity: "Rare",
-        attackPoints: 9300,
-        defensePoints: 8600,
-        imageUrl: "https://example.com/durant.jpg",
-        collectionId: nbaLegends.id,
-      },
-    }),
-  ]);
-
-  // Cards para Classic Rock
-  const rockCards = await Promise.all([
-    prisma.card.create({
-      data: {
-        name: "Queen",
-        rarity: "Ultra Rare",
-        attackPoints: 9600,
-        defensePoints: 9200,
-        imageUrl: "https://example.com/queen.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Led Zeppelin",
-        rarity: "Ultra Rare",
-        attackPoints: 9700,
-        defensePoints: 9100,
-        imageUrl: "https://example.com/ledzeppelin.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Pink Floyd",
-        rarity: "Ultra Rare",
-        attackPoints: 9500,
-        defensePoints: 9300,
-        imageUrl: "https://example.com/pinkfloyd.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "The Beatles",
-        rarity: "Ultra Rare",
-        attackPoints: 9800,
-        defensePoints: 9400,
-        imageUrl: "https://example.com/beatles.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "AC/DC",
-        rarity: "Super Rare",
-        attackPoints: 9300,
-        defensePoints: 8800,
-        imageUrl: "https://example.com/acdc.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "The Rolling Stones",
-        rarity: "Super Rare",
-        attackPoints: 9400,
-        defensePoints: 9000,
-        imageUrl: "https://example.com/rollingstones.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Guns N' Roses",
-        rarity: "Rare",
-        attackPoints: 9100,
-        defensePoints: 8700,
-        imageUrl: "https://example.com/gunsnroses.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Metallica",
-        rarity: "Rare",
-        attackPoints: 9200,
-        defensePoints: 8900,
-        imageUrl: "https://example.com/metallica.jpg",
-        collectionId: rockBands.id,
-      },
-    }),
-  ]);
-
-  // Cards para World Monuments
-  const monumentCards = await Promise.all([
-    prisma.card.create({
-      data: {
-        name: "Eiffel Tower",
-        rarity: "Ultra Rare",
-        attackPoints: 8800,
-        defensePoints: 9500,
-        imageUrl: "https://example.com/eiffel.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Great Wall of China",
-        rarity: "Ultra Rare",
-        attackPoints: 8500,
-        defensePoints: 9800,
-        imageUrl: "https://example.com/greatwall.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Taj Mahal",
-        rarity: "Ultra Rare",
-        attackPoints: 8700,
-        defensePoints: 9600,
-        imageUrl: "https://example.com/tajmahal.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Pyramids of Giza",
-        rarity: "Ultra Rare",
-        attackPoints: 8600,
-        defensePoints: 9900,
-        imageUrl: "https://example.com/pyramids.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Colosseum",
-        rarity: "Super Rare",
-        attackPoints: 8400,
-        defensePoints: 9300,
-        imageUrl: "https://example.com/colosseum.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Statue of Liberty",
-        rarity: "Super Rare",
-        attackPoints: 8300,
-        defensePoints: 9200,
-        imageUrl: "https://example.com/liberty.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Stonehenge",
-        rarity: "Rare",
-        attackPoints: 8000,
-        defensePoints: 9400,
-        imageUrl: "https://example.com/stonehenge.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Machu Picchu",
-        rarity: "Rare",
-        attackPoints: 8200,
-        defensePoints: 9100,
-        imageUrl: "https://example.com/machupicchu.jpg",
-        collectionId: worldMonuments.id,
-      },
-    }),
-  ]);
-
-  // Cards para Prehistoric Giants
-  const dinosaurCards = await Promise.all([
-    prisma.card.create({
-      data: {
-        name: "Tyrannosaurus Rex",
-        rarity: "Ultra Rare",
-        attackPoints: 9900,
-        defensePoints: 8800,
-        imageUrl: "https://example.com/trex.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Velociraptor",
-        rarity: "Super Rare",
-        attackPoints: 9400,
-        defensePoints: 8300,
-        imageUrl: "https://example.com/velociraptor.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Brachiosaurus",
-        rarity: "Super Rare",
-        attackPoints: 8500,
-        defensePoints: 9700,
-        imageUrl: "https://example.com/brachiosaurus.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Triceratops",
-        rarity: "Super Rare",
-        attackPoints: 8700,
-        defensePoints: 9600,
-        imageUrl: "https://example.com/triceratops.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Stegosaurus",
-        rarity: "Rare",
-        attackPoints: 8400,
-        defensePoints: 9500,
-        imageUrl: "https://example.com/stegosaurus.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Spinosaurus",
-        rarity: "Ultra Rare",
-        attackPoints: 9800,
-        defensePoints: 8700,
-        imageUrl: "https://example.com/spinosaurus.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Ankylosaurus",
-        rarity: "Rare",
-        attackPoints: 8200,
-        defensePoints: 9800,
-        imageUrl: "https://example.com/ankylosaurus.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Pteranodon",
-        rarity: "Rare",
-        attackPoints: 9100,
-        defensePoints: 8000,
-        imageUrl: "https://example.com/pteranodon.jpg",
-        collectionId: dinosaurs.id,
-      },
-    }),
-  ]);
-
-  // Cards para Gaming History
-  const consoleCards = await Promise.all([
-    prisma.card.create({
-      data: {
-        name: "Atari 2600",
-        rarity: "Ultra Rare",
-        attackPoints: 7500,
-        defensePoints: 8000,
-        imageUrl: "https://example.com/atari.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Nintendo NES",
-        rarity: "Ultra Rare",
-        attackPoints: 8200,
-        defensePoints: 8300,
-        imageUrl: "https://example.com/nes.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Sega Genesis",
-        rarity: "Super Rare",
-        attackPoints: 8100,
-        defensePoints: 8200,
-        imageUrl: "https://example.com/genesis.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Super Nintendo",
-        rarity: "Super Rare",
-        attackPoints: 8300,
-        defensePoints: 8400,
-        imageUrl: "https://example.com/snes.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "PlayStation 1",
-        rarity: "Rare",
-        attackPoints: 8400,
-        defensePoints: 8500,
-        imageUrl: "https://example.com/ps1.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Nintendo 64",
-        rarity: "Rare",
-        attackPoints: 8400,
-        defensePoints: 8300,
-        imageUrl: "https://example.com/n64.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "Xbox",
-        rarity: "Common",
-        attackPoints: 8600,
-        defensePoints: 8700,
-        imageUrl: "https://example.com/xbox.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-    prisma.card.create({
-      data: {
-        name: "PlayStation 2",
-        rarity: "Common",
-        attackPoints: 8700,
-        defensePoints: 8800,
-        imageUrl: "https://example.com/ps2.jpg",
-        collectionId: videogameConsoles.id,
-      },
-    }),
-  ]);
-
-  console.log(
-    `Seed concluído! Criadas ${await prisma.collection.count()} coleções e ${await prisma.card.count()} cards.`
-  );
+  console.log('📊 Progresso inicial do aluno registrado!');
+  console.log('🌿 Seed finalizada com sucesso!');
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
   });

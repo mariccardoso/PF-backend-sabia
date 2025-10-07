@@ -1,28 +1,33 @@
 import prisma from "../../prisma/prisma.js";
 
 class ProgressModel {
-    // Obter todas os progressos
     async findAll(activityId, userId, status, page, limit) {
-        if (Number(page) < 1) {
-            page = 1;
-        }
-        if (Number(limit) < 1 || Number(limit) > 100) {
-            limit = 10;
-        }
+        // Garantir página e limite válidos
+        if (Number(page) < 1) page = 1;
+        if (Number(limit) < 1 || Number(limit) > 100) limit = 10;
         const skip = (Number(page) - 1) * Number(limit);
-        //                4 - 1 = 3 * 10 = 30
+    
         const where = {};
-
-        if (activityId) {
-            where.activityId = activityId;
+    
+        // Converter activityId para número, se fornecido
+        if (activityId !== undefined) {
+            const id = Number(activityId);
+            if (isNaN(id)) throw new Error("activityId inválido");
+            where.activityId = id;
         }
-        if (userId) {
-            where.userId = userId;
+    
+        // Converter userId para número, se fornecido
+        if (userId !== undefined) {
+            const id = Number(userId);
+            if (isNaN(id)) throw new Error("userId inválido");
+            where.userId = id;
         }
+    
+        // Filtrar pelo status, se fornecido
         if (status) {
             where.status = status;
         }
-
+    
         const progress = await prisma.progress.findMany({
             skip,
             take: Number(limit),
@@ -45,15 +50,14 @@ class ProgressModel {
                 },
             },
         });
-
+    
         const totalViews = progress.length;
         const grandTotal = await prisma.progress.count({
             where,
         });
-
+    
         return { totalViews, grandTotal, progress };
     }
-
 
     // Verificar se activityId existe
     async checkActivityExists(activityId) {
@@ -87,15 +91,14 @@ class ProgressModel {
         return progress;
     }
 
-    // Atualizar um progresso
     async update(id, data) {
+        if (!id) throw new Error("ID é obrigatório para atualizar progresso");
+    
         const progress = await prisma.progress.update({
-            where: {
-                id: Number(id),
-            },
+            where: { id: Number(id) },
             data,
         });
-
+    
         return progress;
     }
 
